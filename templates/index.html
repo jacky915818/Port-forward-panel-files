@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>端口转发管理面板</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .header h1 {
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .header p {
+            color: #666;
+            margin: 10px 0 0 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76,175,80,0.2);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-line;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+        .status-active {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .status-inactive {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .contact-info {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .contact-info p {
+            margin: 5px 0;
+            color: #2e7d32;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+        .form-control:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76,175,80,0.2);
+        }
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            float: right;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .command-block {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            position: relative;
+            border: 1px solid #e9ecef;
+        }
+
+        .command-text {
+            font-family: 'Courier New', monospace;
+            margin-right: 80px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>端口转发管理面板</h1>
+            <p>快速设置和管理您的端口转发</p>
+        </div>
+
+        <form id="forwardForm">
+            <div class="form-group">
+                <label for="local_port">本地端口:</label>
+                <input type="number" id="local_port" name="local_port" required min="1" max="65535" placeholder="请输入1-65535之间的端口号">
+            </div>
+            <div class="form-group">
+                <label for="target_host">目标地址:</label>
+                <input type="text" id="target_host" name="target_host" required placeholder="请输入目标主机地址">
+            </div>
+            <div class="form-group">
+                <label for="target_port">目标端口:</label>
+                <input type="number" id="target_port" name="target_port" required min="1" max="65535" placeholder="请输入1-65535之间的端口号">
+            </div>
+            <div class="form-group">
+                <label for="protocol">协议类型:</label>
+                <select id="protocol" name="protocol" class="form-control">
+                    <option value="tcp">TCP (普通)</option>
+                    <option value="https">HTTPS (SSL/TLS)</option>
+                </select>
+            </div>
+            <button type="submit">设置端口转发</button>
+        </form>
+        <div id="message"></div>
+
+        <div class="contact-info">
+            <p><strong>需要帮助？</strong></p>
+            <p>客服QQ：731465465</p>
+            <p>工作时间：周一至周日 9:00-21:00</p>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 端口转发管理面板 - 保留所有权利</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('forwardForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageDiv = document.getElementById('message');
+            
+            // 显示加载消息
+            messageDiv.className = '';
+            messageDiv.innerHTML = '<div class="loading"></div>正在设置端口转发...';
+            
+            fetch('/setup_forward', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = '错误: ' + data.error;
+                } else {
+                    messageDiv.className = 'success';
+                    messageDiv.textContent = data.message;
+                    
+                    // 检查转发状态
+                    checkStatus(formData.get('local_port'));
+                }
+            })
+            .catch(error => {
+                messageDiv.className = 'error';
+                messageDiv.textContent = '错误: ' + error;
+            });
+        };
+
+        function checkStatus(port) {
+            fetch(`/check_status/${port}`)
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                const status = data.status === 'active' ? '运行中' : '未运行';
+                const statusClass = data.status === 'active' ? 'status-active' : 'status-inactive';
+                messageDiv.innerHTML += `\n\n状态: <span class="${statusClass}">${status}</span>`;
+            });
+        }
+
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = '已复制!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html> 

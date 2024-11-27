@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>帮助文档 - 端口转发管理面板</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+
+        /* 布局样式 */
+        .help-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 左侧导航 */
+        .help-nav {
+            width: 280px;
+            background: #1a1f36;
+            padding: 30px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .nav-header {
+            padding: 0 30px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .nav-header h1 {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .nav-header p {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        .nav-group {
+            margin-bottom: 25px;
+            padding: 0 20px;
+        }
+
+        .nav-title {
+            color: #8b92a5;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0 10px;
+            margin-bottom: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            color: #a0aec0;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 4px 0;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: #4CAF50;
+            color: white;
+            box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+        }
+
+        /* 主内容区 */
+        .help-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            max-width: 1200px;
+        }
+
+        .help-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .help-section.active {
+            display: block;
+        }
+
+        /* 快速开始部分 */
+        .quick-start {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            margin-bottom: 30px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            color: #1a1f36;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 i {
+            color: #4CAF50;
+        }
+
+        .section-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        /* API文档样式 */
+        .api-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .api-endpoint {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .method {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .method.get {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .method.post {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .method.delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .endpoint-path {
+            font-family: 'Fira Code', monospace;
+            font-size: 16px;
+            color: #1a1f36;
+        }
+
+        .endpoint-desc {
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        /* 代码块样式 */
+        .code-block {
+            background: #1a1f36;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #2d3748;
+            color: #a0aec0;
+        }
+
+        .code-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        pre {
+            margin: 0;
+            padding: 20px;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e9ecef;
+        }
+
+        /* 参数表格样式 */
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .params-table th,
+        .params-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .params-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #1a1f36;
+        }
+
+        .params-table td {
+            color: #64748b;
+        }
+
+        .param-required {
+            color: #c62828;
+            font-weight: 500;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .help-nav {
+                width: 240px;
+            }
+            .help-content {
+                margin-left: 240px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .help-container {
+                flex-direction: column;
+            }
+            .help-nav {
+                width: 100%;
+                height: auto;
+                position: static;
+                padding: 20px;
+            }
+            .help-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="help-container">
+        <!-- 左侧导航 -->
+        <div class="help-nav">
+            <div class="nav-header">
+                <h1>帮助文档</h1>
+                <p>端口转发管理面板使用指南</p>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">入门指南</div>
+                <div class="nav-item active" onclick="switchTab('quick-start')">
+                    <i class="fas fa-play-circle"></i>
+                    <span>快速开始</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('basic-usage')">
+                    <i class="fas fa-book"></i>
+                    <span>基础使用</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('features')">
+                    <i class="fas fa-star"></i>
+                    <span>功能介绍</span>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">API开发</div>
+                <div class="nav-item" onclick="switchTab('api-auth')">
+                    <i class="fas fa-key"></i>
+                    <span>认证方式</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('api-test-tool')">
+                    <i class="fas fa-tools"></i>
+                    <span>测试工具</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('api-forwards')">
+                    <i class="fas fa-random"></i>
+                    <span>转发管理</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('api-examples')">
+                    <i class="fas fa-code"></i>
+                    <span>示例代码</span>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">其他</div>
+                <div class="nav-item" onclick="switchTab('faq')">
+                    <i class="fas fa-question-circle"></i>
+                    <span>常见问题</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('changelog')">
+                    <i class="fas fa-history"></i>
+                    <span>更新日志</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="help-content">
+            <!-- 快速开始 -->
+            <div id="quick-start" class="help-section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-play-circle"></i> 快速开始</h2>
+                    <p>通过几个简单的步骤，快速了解如何使用端口转发面板</p>
+                </div>
+
+                <div class="quick-start">
+                    <h3>1. 创建端口转发</h3>
+                    <p>在"端口转发"页面，您可以：</p>
+                    <ul>
+                        <li>填写本地端口（要监听的端口）</li>
+                        <li>填写目标地址（要转发到的地址）</li>
+                        <li>填写目标端口（要转发到的端口）</li>
+                        <li>选择协议类型（TCP或HTTPS）</li>
+                    </ul>
+
+                    <h3>2. 管理转发</h3>
+                    <p>在转发列表中，您可以：</p>
+                    <ul>
+                        <li>查看转发状态（运行中/已停止）</li>
+                        <li>启动/停止转发</li>
+                        <li>查看流量统计</li>
+                        <li>删除不需要的转发</li>
+                    </ul>
+
+                    <h3>3. 监控系统</h3>
+                    <p>在仪表盘中，您可以查看：</p>
+                    <ul>
+                        <li>CPU、内存、磁盘使用率</li>
+                        <li>实时网络流量</li>
+                        <li>端口使用情况</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- API认证 -->
+            <div id="api-auth" class="help-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-key"></i> API认证</h2>
+                    <p>了解如何获取和使用API令牌进行身份验证</p>
+                </div>
+
+                <div class="api-section">
+                    <h3>获取API令牌</h3>
+                    <p>在使用API之前，您需要先获取API令牌：</p>
+                    <ol>
+                        <li>进入系统设置页面</li>
+                        <li>找到"API令牌管理"部分</li>
+                        <li>点击"创建令牌"按钮</li>
+                        <li>填写令牌描述并选择有效期</li>
+                        <li>保存生成的令牌（令牌只显示一次）</li>
+                    </ol>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">请求头示例</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <pre><code>X-API-Token: your_token_here</code></pre>
+                    </div>
+
+                    <p class="endpoint-desc">所有API请求都需要在请求头中包含API令牌</p>
+                </div>
+            </div>
+
+            <!-- API测试工具 -->
+            <div id="api-test-tool" class="help-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-tools"></i> API测试工具</h2>
+                    <p>下载API测试工具，快速开始测试API功能</p>
+                </div>
+
+                <div class="api-section">
+                    <div class="download-box" style="
+                        background: #f8f9fa;
+                        border-radius: 12px;
+                        padding: 25px;
+                        text-align: center;
+                        border: 1px solid #e9ecef;
+                        margin-bottom: 30px;
+                    ">
+                        <i class="fas fa-tools" style="
+                            font-size: 48px;
+                            color: #4CAF50;
+                            margin-bottom: 15px;
+                        "></i>
+                        <h3 style="margin-bottom: 15px;">API测试工具</h3>
+                        <p style="color: #64748b; margin-bottom: 20px;">
+                            下载我们的API测试工具，快速验证API功能，无需编写代码即可测试所有API接口。
+                            <br>
+                            支持Windows系统，解压即可使用。
+                        </p>
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #1a1f36; margin-bottom: 10px;">主要功能：</h4>
+                            <ul style="text-align: left; list-style-position: inside; color: #64748b;">
+                                <li>✓ 可视化界面操作</li>
+                                <li>✓ 支持所有API接口测试</li>
+                                <li>✓ 自动保存配置</li>
+                                <li>✓ 实时显示请求结果</li>
+                            </ul>
+                        </div>
+                        <a href="https://www.alipan.com/s/fWgeoioN49f" target="_blank" style="
+                            display: inline-block;
+                            background: #4CAF50;
+                            color: white;
+                            padding: 12px 30px;
+                            border-radius: 6px;
+                            text-decoration: none;
+                            font-weight: 500;
+                            transition: all 0.3s;
+                            box-shadow: 0 2px 4px rgba(76,175,80,0.3);
+                        ">
+                            <i class="fas fa-download"></i>
+                            下载测试工具
+                        </a>
+                        <p style="
+                            margin-top: 15px;
+                            font-size: 13px;
+                            color: #64748b;
+                        ">
+                            文件大小：约 15MB | 版本：v1.0.0
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API转发管理 -->
+            <div id="api-forwards" class="help-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-random"></i> 转发管理API</h2>
+                    <p>通过API管理端口转发</p>
+                </div>
+
+                <div class="api-section">
+                    <!-- 获取转发列表 -->
+                    <div class="api-endpoint">
+                        <div class="endpoint-header">
+                            <span class="method get">GET</span>
+                            <span class="endpoint-path">/api/v1/forwards</span>
+                        </div>
+                        <p class="endpoint-desc">获取所有端口转发列表</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">响应示例</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <pre><code>{
+    "status": "success",
+    "data": [
+        {
+            "local_port": 80,
+            "target_host": "example.com",
+            "target_port": 80,
+            "protocol": "tcp",
+            "status": "active"
+        }
+    ]
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 创建转发 -->
+                    <div class="api-endpoint">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <span class="endpoint-path">/api/v1/forwards</span>
+                        </div>
+                        <p class="endpoint-desc">创建新的端口转发</p>
+
+                        <h4>请求参数</h4>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>参数名</th>
+                                    <th>类型</th>
+                                    <th>必填</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>local_port</td>
+                                    <td>number</td>
+                                    <td><span class="param-required">是</span></td>
+                                    <td>本地端口（1-65535）</td>
+                                </tr>
+                                <tr>
+                                    <td>target_host</td>
+                                    <td>string</td>
+                                    <td><span class="param-required">是</span></td>
+                                    <td>目标主机地址</td>
+                                </tr>
+                                <tr>
+                                    <td>target_port</td>
+                                    <td>number</td>
+                                    <td><span class="param-required">是</span></td>
+                                    <td>目标端口（1-65535）</td>
+                                </tr>
+                                <tr>
+                                    <td>protocol</td>
+                                    <td>string</td>
+                                    <td>否</td>
+                                    <td>协议类型（tcp/https），默认tcp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">请求示例</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <pre><code>{
+    "local_port": 80,
+    "target_host": "example.com",
+    "target_port": 80,
+    "protocol": "tcp"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 删除转发 -->
+                    <div class="api-endpoint">
+                        <div class="endpoint-header">
+                            <span class="method delete">DELETE</span>
+                            <span class="endpoint-path">/api/v1/forwards/{local_port}</span>
+                        </div>
+                        <p class="endpoint-desc">删除指定端口的转发</p>
+                        
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">响应示例</span>
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <pre><code>{
+    "status": "success",
+    "message": "转发已删除"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API示例代码 -->
+            <div id="api-examples" class="help-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-code"></i> 示例代码</h2>
+                    <p>各种编程语言的API调用示例</p>
+                </div>
+
+                <div class="api-section">
+                    <!-- Python示例 -->
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Python</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <pre><code>import requests
+
+class PortForwardClient:
+    def __init__(self, base_url, api_token):
+        self.base_url = base_url
+        self.headers = {'X-API-Token': api_token}
+    
+    def get_forwards(self):
+        """获取所有转发"""
+        response = requests.get(
+            f'{self.base_url}/api/v1/forwards',
+            headers=self.headers
+        )
+        return response.json()
+    
+    def create_forward(self, local_port, target_host, target_port, protocol='tcp'):
+        """创建新的转发"""
+        data = {
+            'local_port': local_port,
+            'target_host': target_host,
+            'target_port': target_port,
+            'protocol': protocol
+        }
+        response = requests.post(
+            f'{self.base_url}/api/v1/forwards',
+            headers=self.headers,
+            json=data
+        )
+        return response.json()
+    
+    def delete_forward(self, local_port):
+        """删除转发"""
+        response = requests.delete(
+            f'{self.base_url}/api/v1/forwards/{local_port}',
+            headers=self.headers
+        )
+        return response.json()
+
+# 使用示例
+client = PortForwardClient('http://your-server:5000', 'your-api-token')
+
+# 获取所有转发
+forwards = client.get_forwards()
+print(forwards)
+
+# 创建转发
+result = client.create_forward(80, 'example.com', 80)
+print(result)
+
+# 删除转发
+result = client.delete_forward(80)
+print(result)</code></pre>
+                    </div>
+
+                    <!-- Shell示例 -->
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Shell</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <pre><code>#!/bin/bash
+
+# 配置
+API_TOKEN="your-api-token"
+SERVER_URL="http://your-server:5000"
+
+# 获取转发列表
+get_forwards() {
+    curl -H "X-API-Token: $API_TOKEN" \
+         "$SERVER_URL/api/v1/forwards"
+}
+
+# 创建转发
+create_forward() {
+    local local_port=$1
+    local target_host=$2
+    local target_port=$3
+    local protocol=${4:-tcp}
+    
+    curl -X POST \
+         -H "X-API-Token: $API_TOKEN" \
+         -H "Content-Type: application/json" \
+         -d "{
+             \"local_port\": $local_port,
+             \"target_host\": \"$target_host\",
+             \"target_port\": $target_port,
+             \"protocol\": \"$protocol\"
+         }" \
+         "$SERVER_URL/api/v1/forwards"
+}
+
+# 删除转发
+delete_forward() {
+    local local_port=$1
+    
+    curl -X DELETE \
+         -H "X-API-Token: $API_TOKEN" \
+         "$SERVER_URL/api/v1/forwards/$local_port"
+}
+
+# 使用示例
+echo "获取所有转发:"
+get_forwards
+
+echo -e "\n创建新转发:"
+create_forward 80 "example.com" 80
+
+echo -e "\n删除转发:"
+delete_forward 80</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 基础使用 -->
+            <div id="basic-usage" class="help-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-book"></i> 基础使用</h2>
+                    <p>详细了解端口转发面板的基本功能和使用法</p>
+                </div>
+
+                <div class="api-section">
+                    <div class="feature-item">
+                        <h3><i class="fas fa-tachometer-alt"></i> 仪表盘</h3>
+                        <p>在仪表盘中，您可以：</p>
+                        <ul>
+                            <li><strong>系统监控：</strong>实时显示CPU、内存、磁盘使用率</li>
+                            <li><strong>网络流量：</strong>监控实时上传和下载速度</li>
+                            <li><strong>图表展示：</strong>直观展示系统资源使用趋势</li>
+                            <li><strong>端口统计：</strong>查看已用和可用端口数量</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-item">
+                        <h3><i class="fas fa-random"></i> 端口转发</h3>
+                        <p>在端口转发页面，您可以：</p>
+                        <ul>
+                            <li><strong>创建转发：</strong>设置本地端口、目标地址和端口</li>
+                            <li><strong>管理转发：</strong>启动、停止、删除转发</li>
+                            <li><strong>流量统计：</strong>查看每个端口的流量使用情况</li>
+                            <li><strong>批量操作：</strong>支持重置所有转发</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-item">
+                        <h3><i class="fas fa-cog"></i> 系统设置</h3>
+                        <p>在系统设置中，您可以：</p>
+                        <ul>
+                            <li><strong>异常通知：</strong>配置邮件通知，及时获知系统异常</li>
+                            <li><strong>API管理：</strong>创建和管理API令牌</li>
+                            <li><strong>阈值设置：</strong>自定义系统资源告警阈值</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 功能介绍 -->
+            <div id="features" class="help-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-star"></i> 功能介绍</h2>
+                    <p>端口转发管理面板的核心功能</p>
+                </div>
+
+                <div class="api-section">
+                    <div class="feature-item">
+                        <h3><i class="fas fa-random"></i> 端口转发</h3>
+                        <ul>
+                            <li><strong>多协议支持：</strong>支持TCP和HTTPS协议</li>
+                            <li><strong>流量监控：</strong>实时统计每个端口的流量</li>
+                            <li><strong>状态管理：</strong>可随时启动/停止转发</li>
+                            <li><strong>批量操作：</strong>支持一键重置所有转发</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-item">
+                        <h3><i class="fas fa-chart-line"></i> 系统监控</h3>
+                        <ul>
+                            <li><strong>资源监控：</strong>CPU、内存、磁盘使用率</li>
+                            <li><strong>流量统计：</strong>实时网络流量监控</li>
+                            <li><strong>图表展示：</strong>直观的数据可视化</li>
+                            <li><strong>历史记录：</strong>查看历史使用趋势</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-item">
+                        <h3><i class="fas fa-bell"></i> 异常通知</h3>
+                        <ul>
+                            <li><strong>邮件通知：</strong>系统异常时发送邮件提醒</li>
+                            <li><strong>阈值设置：</strong>自定义告警触发条件</li>
+                            <li><strong>实时预警：</strong>及时发现系统问题</li>
+                            <li><strong>通知测试：</strong>支持发送测试通知</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-item">
+                        <h3><i class="fas fa-code"></i> API接口</h3>
+                        <ul>
+                            <li><strong>完整API：</strong>支持所有管理功能</li>
+                            <li><strong>安全认证：</strong>基于令牌的身份验证</li>
+                            <li><strong>示例代码：</strong>多语言调用示例</li>
+                            <li><strong>接口文档：</strong>详细的API说明</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 常见问题 -->
+            <div id="faq" class="help-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-question-circle"></i> 常见问题</h2>
+                    <p>常见问题解答</p>
+                </div>
+
+                <div class="api-section">
+                    <div class="faq-item">
+                        <h3>Q: 端口使用数与转发列表不一致怎么办？</h3>
+                        <p>A: 如果发现可用端口数量比转发列表显示的转发数量少，或者转发列表显示不完整，可以：</p>
+                        <ul>
+                            <li>点击面板上的"重置所有转发"按钮</li>
+                            <li>这将清理所有转发记录并重置端口使用数</li>
+                            <li>重置后可重新添加需要的转发</li>
+                        </ul>
+                        <p style="color: #f44336;"><i class="fas fa-exclamation-triangle"></i> 注意：重置操作会删除所有现有转发，请谨慎操作！</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Q: 如何重置所有端口转发？</h3>
+                        <p>A: 在端口转发页面，点击"重置所有转发"按钮即可。此操作会删除所有转发配置，请谨慎操作。</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Q: 为什么端口转发失败？</h3>
+                        <p>A: 常见原因包括：</p>
+                        <ul>
+                            <li>端口已被其他程序占用</li>
+                            <li>防火墙阻止了端口访问</li>
+                            <li>目标地址无法连接</li>
+                            <li>系统资源不足</li>
+                        </ul>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Q: 如何查看端口流量统计？</h3>
+                        <p>A: 在转发列表中，每个端口都会显示实时的上传和下载流量统计。</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Q: 如何设置异常通知？</h3>
+                        <p>A: 在系统设置页面，启用异常通知，填写接收邮箱并设置告警阈值即可。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 更新日志 -->
+            <div id="changelog" class="help-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> 更新日志</h2>
+                    <p>版本更新记录</p>
+                </div>
+
+                <div class="api-section">
+                    <div class="version-item">
+                        <h3>当前版本 v1.0.0</h3>
+                        <p class="version-date">2024-03-26</p>
+                        <ul>
+                            <li>✨ 这是最新版本，暂无更新</li>
+                            <li>🚀 包含所有最新功能</li>
+                            <li>💪 性能稳定可靠</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切换标签页
+        function switchTab(tabId) {
+            // 更新导航项状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.nav-item[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            
+            // 更新内容区域
+            document.querySelectorAll('.help-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // 复制代码
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = btn.querySelector('i');
+                icon.className = 'fas fa-check';
+                setTimeout(() => {
+                    icon.className = 'fas fa-copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html> 
